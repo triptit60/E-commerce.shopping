@@ -8,24 +8,43 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .forms import SignUpForm,UpdateUserForm,ChangePasswordForm,UserInfoForm
 from django import forms
-
+import json 
+from products.cart import Cart
 # Create your views here.
 
-def login_user(request): 
-    if request.method == "POST":
-           username= request.POST['username']
-           password = request.POST['password']
-           user = authenticate(request, username=username , password=password)
-           if user is not None:
-                login(request, user)
-                messages.success(request,('You Have Been Logged In'))
-                return redirect ('home')
-           else:
-               messages.success(request,("There was an error,"))
-               return redirect ('login')
+	
 
-    else:
-        return render (request,'login.html',)
+def login_user(request):
+	if request.method == "POST":
+		username = request.POST['username']
+		password = request.POST['password']
+		user = authenticate(request, username=username, password=password)
+		if user is not None:
+			login(request, user)
+
+			 #Do some shopping cart stuff
+			current_user = Profile.objects.get(user__id=request.user.id)
+			# Get their saved cart from database
+			saved_cart = current_user.old_cart
+			# Convert database string to python dictionary
+			if saved_cart:
+				# Convert to dictionary using JSON
+				converted_cart = json.loads(saved_cart)
+				# Add the loaded cart dictionary to our session
+				# Get the cart
+				cart = Cart(request)
+				# Loop thru the cart and add the items from the database
+				for key,value in converted_cart.items():
+					cart.db_add(product=key, quantity=value)
+
+			messages.success(request, ("You Have Been Logged In!"))
+			return redirect('home')
+		else:
+			messages.success(request, ("There was an error, please try again..."))
+			return redirect('login')
+
+	else:
+		return render(request, 'store/login.html', {})
 
 def logout_user(request):
     logout(request)
@@ -56,7 +75,7 @@ def register_user(request):
 
 def update_user(request):
 	if request.user.is_authenticated:
-		profile, created = Profile.objects.get_or_create(user=request.user)
+		current_user = User.objects.get(id=request.user.id)
 		user_form = UpdateUserForm(request.POST or None, instance=current_user)
 
 		if user_form.is_valid():
@@ -98,7 +117,7 @@ def update_password(request):
 
 def update_info(request):
 	if request.user.is_authenticated:
-		current_user = Profile.objects.get(user=request.user)
+		current_user, created = Profile.objects.get_or_create(user=request.user)
 		form = UserInfoForm(request.POST or None, instance=current_user)
 
 		if form.is_valid():

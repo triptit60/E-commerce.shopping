@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f3f6fb;
+            min-height: 100vh;
+            padding: 32px 20px 40px;
+            color: #111827;
+        }
+
+        .container {
+            max-width: 840px;
+            margin: 0 auto;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 20px;
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
+            padding: 40px;
+            text-align: left;
+        }
+
+        .success-icon {
+            width: 72px;
+            height: 72px;
+            background: #10b981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.22);
+        }
+
+        .success-icon::after {
+            content: "✓";
+            color: white;
+            font-size: 36px;
+            font-weight: 700;
+        }
+
+        h1 {
+            color: #111827;
+            font-size: 32px;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            font-size: 16px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .order-details {
+            background: #f8fafc;
+            padding: 28px;
+            border-radius: 18px;
+            margin: 30px 0;
+            border: 1px solid #e5e7eb;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid #dbe1e8;
+            align-items: center;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: #4b5563;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .detail-value {
+            color: #111827;
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 18px 0 0;
+            border-top: 1px solid #dbe1e8;
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .total-row .detail-value {
+            color: #10b981;
+        }
+
+        .message {
+            color: #4b5563;
+            font-size: 15px;
+            margin: 24px 0;
+            line-height: 1.75;
+            text-align: center;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(79, 70, 229, 0.18);
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #111827;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            background: #e5e7eb;
+        }
+
+        .confirmation-email {
+            background: #ecfdf5;
+            border-left: 4px solid #22c55e;
+            padding: 18px;
+            border-radius: 14px;
+            margin: 20px 0;
+            text-align: left;
+            font-size: 14px;
+            color: #065f46;
+        }
+
+        @media (max-width: 720px) {
+            .container {
+                padding: 28px 20px;
+            }
+
+            .success-icon {
+                width: 64px;
+                height: 64px;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+
+            .detail-row {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 14px 0;
+            }
+
+            .button-group {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success-icon"></div>
+
+        <h1>Payment Successful!</h1>
+        <p class="subtitle">Thank you for your purchase</p>
+
+        <div class="order-details">
+            <div class="detail-row">
+                <span class="detail-label">Order ID:</span>
+                <span class="detail-value">#{{ order.id }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Transaction ID:</span>
+                <span class="detail-value">{{ transaction_id }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Date:</span>
+                <span class="detail-value">{{ payment_date|date:"M d, Y" }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Payment Method:</span>
+                <span class="detail-value">Credit Card</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Items:</span>
+                <span class="detail-value">{{ items_count }} item(s)</span>
+            </div>
+            <div class="total-row">
+                <span class="detail-label">Total Paid:</span>
+                <span class="detail-value">${{ total_amount|floatformat:2 }}</span>
+            </div>
+        </div>
+
+        <div class="confirmation-email">
+            📧 A confirmation email has been sent to <strong>{{ user_email }}</strong>
+        </div>
+
+        <p class="message">
+            Your order has been placed successfully. You will receive an email confirmation shortly with your order details and tracking information.
+        </p>
+
+        <div class="button-group">
+            <a href="/orders/" class="btn btn-primary">View Order Details</a>
+            <a href="/shop/" class="btn btn-secondary">Continue Shopping</a>
+        </div>
+    </div>
+</body>
+</html>
