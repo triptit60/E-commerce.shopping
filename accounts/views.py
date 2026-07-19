@@ -10,6 +10,8 @@ from .forms import SignUpForm,UpdateUserForm,ChangePasswordForm,UserInfoForm
 from django import forms
 import json 
 from products.cart import Cart
+from payment.models import ShippingAddress
+from payment.forms import ShippingForm
 # Create your views here.
 
 	
@@ -102,7 +104,7 @@ def update_password(request):
 				form.save()
 				messages.success(request, "Your Password Has Been Updated...")
 				login(request, current_user)
-				return redirect('update_user')
+				return redirect('updateuser')
 			else:
 				for error in list(form.errors.values()):
 					messages.error(request, error)
@@ -118,14 +120,24 @@ def update_password(request):
 def update_info(request):
 	if request.user.is_authenticated:
 		current_user, created = Profile.objects.get_or_create(user=request.user)
+		# Get Current User's Shipping Info
+		shipping_user, created = ShippingAddress.objects.get_or_create(
+    user=request.user
+)
+		
+		# Get original User Form
 		form = UserInfoForm(request.POST or None, instance=current_user)
-
-		if form.is_valid():
+		# Get User's Shipping Form
+		shipping_form = ShippingForm(request.POST or None, instance=shipping_user)		
+		if form.is_valid() or shipping_form.is_valid():
+			# Save original form
 			form.save()
+			# Save shipping form
+			shipping_form.save()
 
-			messages.success(request, "Your info Has Been Updated!!")
+			messages.success(request, "Your Info Has Been Updated!!")
 			return redirect('home')
-		return render(request, "updateinfo.html", {'form':form})
+		return render(request, "updateinfo.html", {'form':form, 'shipping_form':shipping_form})
 	else:
 		messages.success(request, "You Must Be Logged In To Access That Page!!")
 		return redirect('home')

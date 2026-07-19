@@ -13,6 +13,9 @@
                       
 
             {% if user.is_authenticated %}
+                {% if user.is_staff %}
+                <li class="nav-item"><a class="nav-link" href="{% url 'admin_dashboard' %}">Dashboard</a></li>
+                {% endif %}
                        <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Profiles</a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
