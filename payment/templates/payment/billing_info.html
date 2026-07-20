@@ -72,9 +72,26 @@
 <br/>
 
 {% comment %} <a href="{% url 'payment_success' %}" class="btn btn-secondary">Pay Now</a> {% endcomment %}
+
+<div class="card">
+  <div class="card-header">
+    Billing Info
+  </div>
+  <div class="card-body">
+    <form method="POST" action="{% url 'process_order' %}">
+      {% csrf_token %}
+    {{ billing_form.as_p }}
+    
+  </div>
+</div>
+<br/>
+
+
+
 <button type="submit" class="btn btn-secondary">
   Pay Now
 </button>
+</form>
 <br/><br/>
 
 
