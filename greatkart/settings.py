@@ -12,9 +12,17 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+#load our environment variables
+load_dotenv()
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+# load .env file if present 
+
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -80,10 +88,18 @@ WSGI_APPLICATION = 'greatkart.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'ecommerce_db',
+        'USER': 'postgres',
+        'PASSWORD': os.environ.get("DB_PASSWORD_YO"),
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
