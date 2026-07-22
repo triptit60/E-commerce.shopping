@@ -33,9 +33,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-4bv3pw^b*iy$bz9f=(zh@nx4w91ue$cbev1u(gcr4b%h2j2$o9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -104,9 +104,12 @@ WSGI_APPLICATION = 'greatkart.wsgi.application'
 #     }
 #}
 
+import dj_database_url
+import os
+
 DATABASES = {
     "default": dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}"
+        default=f"postgresql://postgres:{os.getenv('DB_PASSWORD_YO')}@localhost:5432/ecommerce_db"
     )
 }
 
@@ -146,6 +149,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
 STATICFILES_DIRS = ['static/']
 MEDIA_URL ='media/'
 MEDIA_ROOT =os.path.join(BASE_DIR,'media')
