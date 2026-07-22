@@ -1,0 +1,54 @@
+{% comment %} {% extends 'store/base.html' %}
+{% load humanize %}
+
+{% block content %}
+<main class="owner-dashboard">
+  <section class="dashboard-hero">
+    <div>
+      <p class="eyebrow">STORE CONTROL CENTER</p>
+      <h1>Good to see you, {{ request.user.first_name|default:request.user.username }}.</h1>
+      <p class="hero-copy">A live overview of what is selling, what needs attention, and who is shopping.</p>
+    </div>
+    <div class="dashboard-actions">
+      <a href="{% url 'admin:store_product_add' %}" class="btn btn-dark"><i class="bi bi-plus-lg me-1"></i> Add product</a>
+      <a href="{% url 'not_shipped_dash' %}" class="btn btn-outline-dark">Review orders</a>
+    </div>
+  </section>
+
+  <section class="metric-grid">
+    <article class="metric-card metric-card--primary"><span class="metric-icon"><i class="bi bi-currency-dollar"></i></span><p>Total revenue</p><h2>${{ total_revenue|floatformat:2|intcomma }}</h2><small>${{ today_revenue|floatformat:2|intcomma }} today</small></article>
+    <article class="metric-card"><span class="metric-icon metric-icon--blue"><i class="bi bi-bag-check"></i></span><p>Total orders</p><h2>{{ total_orders|intcomma }}</h2><small>{{ shipped_orders }} fulfilled</small></article>
+    <article class="metric-card"><span class="metric-icon metric-icon--orange"><i class="bi bi-clock-history"></i></span><p>Needs shipping</p><h2>{{ pending_orders|intcomma }}</h2><small>Orders awaiting fulfilment</small></article>
+    <article class="metric-card"><span class="metric-icon metric-icon--purple"><i class="bi bi-people"></i></span><p>Customers</p><h2>{{ total_customers|intcomma }}</h2><small>Registered shoppers</small></article>
+  </section>
+
+  <section class="dashboard-layout">
+    <article class="dashboard-panel sales-panel">
+      <div class="panel-heading"><div><p class="panel-kicker">LAST 7 DAYS</p><h2>Sales activity</h2></div><span class="panel-total">${{ total_revenue|floatformat:0|intcomma }} all time</span></div>
+      <div class="sales-chart" role="img" aria-label="Sales by day for the last seven days">
+        {% for day in chart_data %}
+        <div class="bar-wrap"><span class="bar-value">${{ day.total|floatformat:0 }}</span><div class="bar" style="height: {{ day.height }}%"></div><span class="bar-label">{{ day.label }}</span></div>
+        {% endfor %}
+      </div>
+    </article>
+    <article class="dashboard-panel">
+      <div class="panel-heading"><div><p class="panel-kicker">CATALOG</p><h2>Quick management</h2></div></div>
+      <div class="quick-links">
+        <a href="{% url 'admin:store_product_changelist' %}"><span class="quick-link-icon"><i class="bi bi-box-seam"></i></span><span><strong>Products</strong><small>{{ total_products }} in catalog</small></span><i class="bi bi-arrow-up-right"></i></a>
+        <a href="{% url 'admin:store_category_changelist' %}"><span class="quick-link-icon"><i class="bi bi-collection"></i></span><span><strong>Categories</strong><small>{{ total_categories }} collections</small></span><i class="bi bi-arrow-up-right"></i></a>
+        <a href="{% url 'admin:auth_user_changelist' %}"><span class="quick-link-icon"><i class="bi bi-person-gear"></i></span><span><strong>Customers</strong><small>Manage shopper accounts</small></span><i class="bi bi-arrow-up-right"></i></a>
+      </div>
+    </article>
+  </section>
+
+  <section class="dashboard-layout dashboard-layout--bottom">
+    <article class="dashboard-panel table-panel">
+      <div class="panel-heading"><div><p class="panel-kicker">ORDERS</p><h2>Recent orders</h2></div><a href="{% url 'not_shipped_dash' %}">View pending <i class="bi bi-arrow-right"></i></a></div>
+      <div class="table-responsive"><table class="dashboard-table"><thead><tr><th>ORDER</th><th>CUSTOMER</th><th>DATE</th><th>TOTAL</th><th>STATUS</th></tr></thead><tbody>
+        {% for order in recent_orders %}<tr><td><a href="{% url 'orders' order.id %}">#{{ order.id }}</a></td><td><strong>{{ order.full_name }}</strong><small>{{ order.email }}</small></td><td>{{ order.date_ordered|date:'M j, Y' }}</td><td>${{ order.amount_paid|floatformat:2 }}</td><td>{% if order.shipped %}<span class="status-pill status-pill--done">Shipped</span>{% else %}<span class="status-pill status-pill--pending">Pending</span>{% endif %}</td></tr>{% empty %}<tr><td colspan="5" class="empty-state">No orders have been placed yet.</td></tr>{% endfor %}
+      </tbody></table></div>
+    </article>
+    <article class="dashboard-panel products-panel"><div class="panel-heading"><div><p class="panel-kicker">PERFORMANCE</p><h2>Top products</h2></div></div><ol class="product-ranking">{% for product in top_products %}<li><span class="rank">{{ forloop.counter }}</span><div><strong>{{ product.product__name }}</strong><small>{{ product.units }} unit{{ product.units|pluralize }} sold</small></div><span>${{ product.revenue|floatformat:0|intcomma }}</span></li>{% empty %}<li class="empty-state">Sales data will appear here after your first order.</li>{% endfor %}</ol></article>
+  </section>
+</main>
+{% endblock %} {% endcomment %}
