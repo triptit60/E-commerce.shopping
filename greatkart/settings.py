@@ -132,7 +132,11 @@ CSRF_TRUSTED_ORIGINS = [
 
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_DIRS = ['static/']
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
 MEDIA_URL ='media/'
 MEDIA_ROOT =os.path.join(BASE_DIR,'media')
 # Default primary key field type
