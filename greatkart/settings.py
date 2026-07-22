@@ -15,6 +15,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 #load our environment variables
 load_dotenv()
+import dj_database_url
 
 
 
@@ -90,17 +91,23 @@ WSGI_APPLICATION = 'greatkart.wsgi.application'
 
 
 
+# DATABASES = {
+#     'default': {
+#         # 'ENGINE': 'django.db.backends.sqlite3',
+#         # 'NAME': BASE_DIR / 'db.sqlite3',
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'ecommerce_db',
+#         'USER': 'postgres',
+#         'PASSWORD': os.environ.get("DB_PASSWORD_YO"),
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+#}
+
 DATABASES = {
-    'default': {
-        # 'ENGINE': 'django.db.backends.sqlite3',
-        # 'NAME': BASE_DIR / 'db.sqlite3',
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'ecommerce_db',
-        'USER': 'postgres',
-        'PASSWORD': os.environ.get("DB_PASSWORD_YO"),
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+    "default": dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}"
+    )
 }
 
 
